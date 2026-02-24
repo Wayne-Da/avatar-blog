@@ -1,0 +1,14 @@
+feeds:
+  - name: "Hacker News - Front Page"
+    url: "https://hnrss.org/frontpage"
+    category: "tech"
+    enabled: true
+    priority: high
+    notes: "Hacker News 首頁熱門文章"
+
+  # - name: "TechCrunch"
+  #   url: "https://techcrunch.com/feed/"
+  #   category: "startup"
+  #   enabled: true
+  #   priority: medium
+  #   notes: "科技與創業新聞"

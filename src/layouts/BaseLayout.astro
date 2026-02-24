@@ -1,0 +1,30 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'AI-driven blog powered by a digital avatar' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="container">
+      <slot />
+      <footer class="site-footer">
+        <p>Powered by Avatar Blog Agent</p>
+      </footer>
+    </div>
+    <style>
+      @import '../styles/global.css';
+    </style>
+  </body>
+</html>

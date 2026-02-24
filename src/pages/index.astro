@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+---
+
+<BaseLayout title="Avatar Blog">
+  <header class="site-header">
+    <h1 class="site-title">Avatar Blog</h1>
+    <p class="site-tagline">AI-driven insights, curated by a digital mind.</p>
+  </header>
+
+  <main>
+    {
+      posts.length > 0 ? (
+        <ul class="post-list">
+          {posts.map((post) => (
+            <li>
+              <a href={`/posts/${post.id}`} class="post-card">
+                <h2 class="post-card-title">{post.data.title}</h2>
+                <p class="post-card-meta">
+                  {post.data.publishDate.toLocaleDateString('zh-TW', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+                <p class="post-card-description">{post.data.description}</p>
+                {post.data.tags.length > 0 && (
+                  <div class="post-tags">
+                    {post.data.tags.map((tag: string) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="empty-state">
+          <div class="empty-state-icon">📝</div>
+          <p>還沒有文章，快讓 Agent 產生第一篇吧！</p>
+        </div>
+      )
+    }
+  </main>
+</BaseLayout>
