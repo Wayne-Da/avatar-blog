@@ -88,58 +88,76 @@ Each skill file has:
 ## Target Directory Structure
 
 ```
-avatar-blog-platform/
-├── docker-compose.yml                ← Miniflux + PostgreSQL
-├── .env.example                      ← Environment variables template
-├── .env                              ← (gitignored) Actual secrets
+~/Projects/
+├── avatar-blog/                        ← Platform repo (pure control plane)
+│   ├── docker-compose.yml              ← Miniflux + PostgreSQL
+│   ├── .env.example                    ← Environment variables template
+│   ├── .env                            ← (gitignored) Actual secrets
+│   │
+│   ├── .agents/
+│   │   ├── PLAN.md                     ← THIS FILE
+│   │   ├── workflows/
+│   │   │   ├── generate-post.md        ← Daily content generation workflow
+│   │   │   └── init-new-avatar.md      ← New avatar setup workflow
+│   │   ├── skills/
+│   │   │   ├── core/
+│   │   │   │   ├── filter-content.md   ← L1: Content relevance filtering
+│   │   │   │   └── generate-draft.md   ← L1: Article generation
+│   │   │   ├── ops/
+│   │   │   │   ├── fetch-feeds.md      ← L2: Miniflux API fetch
+│   │   │   │   ├── validate-post.md    ← L2: Quality validation (hybrid)
+│   │   │   │   └── publish-and-notify.md ← L2: Publish + Discord + mark read
+│   │   │   └── setup/
+│   │   │       ├── init-avatar-site.md ← L3: GitHub repo + Miniflux sync
+│   │   │       └── bind-domain.md      ← L3: Custom domain binding
+│   │   └── rules/
+│   │       ├── quality-gate.md         ← Hard + soft quality rules
+│   │       ├── publish-policy.md       ← Auto vs manual publish conditions
+│   │       └── notification.md         ← Discord notification rules
+│   │
+│   ├── avatars/
+│   │   ├── tech-observer/
+│   │   │   ├── soul.md                 ← Avatar personality
+│   │   │   └── config.yaml             ← local_path: "../tech-observer"
+│   │   └── _template/
+│   │       ├── soul.md.example
+│   │       └── config.yaml.example
+│   │
+│   ├── scripts/
+│   │   ├── fetch-feeds.mjs             ← Miniflux API client
+│   │   ├── validate.mjs                ← Zod schema + hard rules
+│   │   ├── publish.mjs                 ← git add/commit/push in site repo
+│   │   ├── discord-notify.mjs          ← Discord webhook sender
+│   │   ├── init-site.mjs              ← Automated repo + site creation
+│   │   └── lib/miniflux.mjs            ← Miniflux API library
+│   │
+│   ├── template/                       ← Astro site template (parameterized)
+│   │   ├── site-config.json            ← Per-site metadata (template)
+│   │   ├── astro.config.mjs            ← Reads from site-config.json
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   ├── .gitignore
+│   │   ├── .github/workflows/deploy.yml
+│   │   ├── public/
+│   │   └── src/
+│   │       ├── content.config.ts
+│   │       ├── layouts/BaseLayout.astro ← Reads description/footer from site-config
+│   │       ├── pages/index.astro        ← Reads title/tagline from site-config
+│   │       ├── pages/posts/[...slug].astro
+│   │       ├── styles/global.css
+│   │       └── content/{posts,drafts}/
+│   │
+│   └── package.json                    ← Platform deps only (yaml, zod)
 │
-├── .agents/
-│   ├── PLAN.md                       ← THIS FILE
-│   ├── workflows/
-│   │   ├── generate-post.md          ← Daily content generation workflow
-│   │   └── init-new-avatar.md        ← New avatar setup workflow
-│   ├── skills/
-│   │   ├── core/
-│   │   │   ├── filter-content.md     ← L1: Content relevance filtering
-│   │   │   └── generate-draft.md     ← L1: Article generation
-│   │   ├── ops/
-│   │   │   ├── fetch-feeds.md        ← L2: Miniflux API fetch
-│   │   │   ├── validate-post.md      ← L2: Quality validation (hybrid)
-│   │   │   └── publish-and-notify.md ← L2: Publish + Discord + mark read
-│   │   └── setup/
-│   │       ├── init-avatar-site.md   ← L3: GitHub repo + Miniflux sync
-│   │       └── bind-domain.md        ← L3: Custom domain binding
-│   └── rules/
-│       ├── quality-gate.md           ← Hard + soft quality rules
-│       ├── publish-policy.md         ← Auto vs manual publish conditions
-│       └── notification.md           ← Discord notification rules
-│
-├── avatars/
-│   ├── tech-observer/
-│   │   ├── soul.md                   ← Avatar personality (migrated from soul/avatar.md)
-│   │   └── config.yaml               ← Feeds + site + schedule config
-│   └── _template/
-│       ├── soul.md.example
-│       └── config.yaml.example
-│
-├── scripts/
-│   ├── fetch-feeds.mjs               ← Miniflux API client
-│   ├── validate.mjs                  ← Zod schema + hard rules
-│   ├── publish.mjs                   ← git add/commit/push + frontmatter
-│   └── discord-notify.mjs            ← Discord webhook sender
-│
-├── template/                         ← Astro site template (parameterized)
-│   ├── src/
-│   │   ├── layouts/BaseLayout.astro
-│   │   ├── pages/index.astro
-│   │   ├── pages/posts/[...slug].astro
-│   │   ├── styles/global.css
-│   │   └── content.config.ts
-│   ├── astro.config.mjs              ← Parameterized (reads env vars)
+├── tech-observer/                      ← Independent site repo (sibling)
+│   ├── site-config.json
+│   ├── astro.config.mjs
 │   ├── package.json
-│   └── .github/workflows/deploy.yml
+│   ├── .github/workflows/deploy.yml
+│   └── src/content/posts/*.md
 │
-└── package.json                      ← Platform dependencies
+└── (future avatar repos as siblings)
+```
 ```
 
 ---
@@ -187,15 +205,20 @@ Goal: One avatar (tech-observer) running the full pipeline automatically.
 - [ ] Document the claude CLI command for CRON invocation
 - [ ] Test scheduled execution on user's machine
 
-### Phase 2: 1→N Scaling
+### Phase 2: 1→N Scaling (Multi-Repo)
 
-Goal: Adding a second avatar is trivial.
+Goal: Each avatar is an independent sibling repo with its own GitHub Pages site. Platform repo is pure control plane.
 
-- [ ] `workflows/init-new-avatar.md`
-- [ ] `skills/setup/init-avatar-site.md`
-- [ ] `skills/setup/bind-domain.md`
-- [ ] Extract current Astro site into `template/` (parameterized)
-- [ ] Create template GitHub repo
+- [x] Extract Astro site into `template/` (parameterized with site-config.json)
+- [x] Migrate tech-observer to independent repo (`Wayne-Da/tech-observer`)
+- [x] Clean platform repo (remove src/, public/, astro.config.mjs, tsconfig.json)
+- [x] Update `avatars/tech-observer/config.yaml` with new repo/paths
+- [x] Fix `scripts/publish.mjs` git cwd to use siteRoot
+- [x] `scripts/init-site.mjs` — automated repo + site creation
+- [x] `workflows/init-new-avatar.md`
+- [x] `skills/setup/init-avatar-site.md`
+- [x] `skills/setup/bind-domain.md`
+- [x] Remove platform deploy.yml (no longer has a site)
 - [ ] Test: create second avatar using the init workflow
 - [ ] Verify both avatars run independently via CRON
 
@@ -258,8 +281,9 @@ feeds:
       priority: medium
 
 site:
-  repo: "Wayne-Da/avatar-blog"          # GitHub repo (org/name)
-  base_path: "/avatar-blog"
+  repo: "Wayne-Da/tech-observer"        # GitHub repo (org/name) — each avatar = own repo
+  base_path: "/tech-observer"
+  local_path: "../tech-observer"        # Relative to platform repo root
   domain: null                          # Custom domain (optional)
 
 pipeline:

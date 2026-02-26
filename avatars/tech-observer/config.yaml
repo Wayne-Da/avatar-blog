@@ -8,9 +8,9 @@ feeds:
       priority: high
 
 site:
-  repo: "Wayne-Da/avatar-blog"
-  base_path: "/avatar-blog"
-  local_path: "."
+  repo: "Wayne-Da/tech-observer"
+  base_path: "/tech-observer"
+  local_path: "../tech-observer"
   domain: null
 
 pipeline:

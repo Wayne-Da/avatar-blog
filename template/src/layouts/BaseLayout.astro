@@ -1,10 +1,12 @@
 ---
+import siteConfig from '../../site-config.json';
+
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = 'AI-driven blog powered by a digital avatar' } = Astro.props;
+const { title, description = siteConfig.description } = Astro.props;
 ---
 
 <!doctype html>
@@ -20,7 +22,7 @@ const { title, description = 'AI-driven blog powered by a digital avatar' } = As
     <div class="container">
       <slot />
       <footer class="site-footer">
-        <p>Powered by Avatar Blog Agent</p>
+        <p>{siteConfig.footer}</p>
       </footer>
     </div>
     <style>

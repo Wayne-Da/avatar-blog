@@ -42,8 +42,8 @@ function extractTitle(content) {
   return match ? match[1] : basename(content, '.md');
 }
 
-function git(cmd) {
-  return execSync(`git ${cmd}`, { cwd: ROOT, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+function git(cmd, cwd) {
+  return execSync(`git ${cmd}`, { cwd, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
 }
 
 async function main() {
@@ -87,13 +87,13 @@ async function main() {
   console.error(`  From: ${draftPath}`);
   console.error(`  To:   ${destPath}`);
 
-  // Git operations
+  // Git operations (run in the site repo, not the platform repo)
   try {
-    git(`add "${destPath}"`);
+    git(`add "${destPath}"`, siteRoot);
     // Stage the deletion of the draft (ignore if untracked)
-    try { git(`add "${draftPath}"`); } catch { /* untracked file, skip */ }
-    git(`commit -m "publish: ${title}"`);
-    git('push origin main');
+    try { git(`add "${draftPath}"`, siteRoot); } catch { /* untracked file, skip */ }
+    git(`commit -m "publish: ${title}"`, siteRoot);
+    git('push origin main', siteRoot);
     console.error('Git: committed and pushed.');
   } catch (err) {
     console.error(`Git error: ${err.message}`);

@@ -16,9 +16,9 @@ feeds:
     #   priority: medium
 
 site:
-  repo: "org/repo-name"         # GitHub repo (org/name)
-  base_path: "/repo-name"       # GitHub Pages base path
-  local_path: "."               # Path to site root, relative to project root
+  repo: "org/my-avatar"         # GitHub repo (org/name) — each avatar = own repo
+  base_path: "/my-avatar"       # GitHub Pages base path
+  local_path: "../my-avatar"    # Path to site repo, relative to platform root
   domain: null                  # Custom domain (optional, e.g. "blog.example.com")
 
 pipeline:
