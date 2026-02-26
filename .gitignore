@@ -25,3 +25,9 @@ pnpm-debug.log*
 
 # agent data (fetched RSS, not committed)
 agent/data/
+
+# Docker volumes
+miniflux-db/
+
+# Script output
+scripts/output/

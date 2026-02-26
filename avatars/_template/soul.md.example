@@ -1,0 +1,31 @@
+# Avatar Soul Template
+# Copy this file to avatars/<your-avatar-id>/soul.md
+# The frontmatter defines structured metadata; the body defines personality.
+
+# ---
+# name: "Your Avatar Name"
+# tagline: "一句話描述這個角色"
+# expertise: ["Area1", "Area2"]
+# interests: ["Topic1", "Topic2"]
+# tone: "casual-professional"
+# perspective: "描述觀點傾向"
+# language: "zh-TW"
+# ---
+#
+# ## 角色背景
+#
+# 描述這個角色的背景故事和價值觀。
+#
+# ## 寫作風格
+#
+# - **語氣**：描述語氣
+# - **結構**：描述結構偏好
+# - **用詞**：描述用詞習慣
+#
+# ## 內容偏好
+#
+# ### 會感興趣的
+# - ...
+#
+# ### 會忽略的
+# - ...

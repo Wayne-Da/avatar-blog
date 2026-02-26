@@ -1,0 +1,30 @@
+# Avatar Configuration Template
+# Copy this file to avatars/<your-avatar-id>/config.yaml
+
+# Unique identifier for this avatar (must match directory name)
+avatar_id: my-avatar
+
+feeds:
+  # Miniflux category name — feeds will be grouped under this category
+  miniflux_category: "my-avatar"
+  sources:
+    - url: "https://example.com/feed.xml"
+      name: "Example Feed"
+      priority: high    # high | medium | low
+    # - url: "https://another.com/rss"
+    #   name: "Another Feed"
+    #   priority: medium
+
+site:
+  repo: "org/repo-name"         # GitHub repo (org/name)
+  base_path: "/repo-name"       # GitHub Pages base path
+  local_path: "."               # Path to site root, relative to project root
+  domain: null                  # Custom domain (optional, e.g. "blog.example.com")
+
+pipeline:
+  schedule: "0 8 * * *"         # CRON expression (for reference only)
+  min_items_to_generate: 3      # Minimum unread items to trigger generation
+  auto_publish: false            # true = publish without human review
+
+notification:
+  discord_webhook_env: "DISCORD_WEBHOOK_MY_AVATAR"  # env var name (not the URL)

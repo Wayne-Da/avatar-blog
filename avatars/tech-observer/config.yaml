@@ -1,0 +1,22 @@
+avatar_id: tech-observer
+
+feeds:
+  miniflux_category: "tech-observer"
+  sources:
+    - url: "https://hnrss.org/frontpage"
+      name: "Hacker News"
+      priority: high
+
+site:
+  repo: "Wayne-Da/avatar-blog"
+  base_path: "/avatar-blog"
+  local_path: "."
+  domain: null
+
+pipeline:
+  schedule: "0 8 * * *"
+  min_items_to_generate: 3
+  auto_publish: false
+
+notification:
+  discord_webhook_env: "DISCORD_WEBHOOK_TECH_OBSERVER"
