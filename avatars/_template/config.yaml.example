@@ -22,7 +22,6 @@ site:
   domain: null                  # Custom domain (optional, e.g. "blog.example.com")
 
 pipeline:
-  schedule: "0 8 * * *"         # CRON expression (for reference only)
   min_items_to_generate: 3      # Minimum unread items to trigger generation
   auto_publish: false            # true = publish without human review
 

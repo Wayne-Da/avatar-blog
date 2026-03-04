@@ -12,6 +12,17 @@ Execute this workflow for a specific avatar to generate a blog post from RSS fee
 
 ---
 
+## Step 0: Sync Feeds
+
+Run:
+```bash
+node scripts/fetch-feeds.mjs --avatar {avatar_id} --sync
+```
+
+This ensures Miniflux subscriptions match config.yaml（新增新 feed、停用已移除的 feed、重新啟用回復的 feed）。
+
+---
+
 ## Step 1: Fetch Feeds
 **Skill**: `.agents/skills/ops/fetch-feeds.md`
 
@@ -100,6 +111,7 @@ node scripts/discord-notify.mjs --avatar {avatar_id} --type error --title "Valid
 ## Data Flow Summary
 
 ```
+Step 0 (sync)     → Miniflux subscriptions match config.yaml
 Step 1 (fetch)    → entries JSON, total count
 Step 2 (filter)   → selected items, entry IDs, theme
 Step 3 (generate) → draft file path

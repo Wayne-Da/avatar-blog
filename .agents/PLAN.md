@@ -129,6 +129,7 @@ Each skill file has:
 │   │   ├── publish.mjs                 ← git add/commit/push in site repo
 │   │   ├── discord-notify.mjs          ← Discord webhook sender
 │   │   ├── init-site.mjs              ← Automated repo + site creation
+│   │   ├── reconcile.mjs              ← Declarative deploy: scan → detect → init
 │   │   └── lib/miniflux.mjs            ← Miniflux API library
 │   │
 │   ├── template/                       ← Astro site template (parameterized)
@@ -219,7 +220,9 @@ Goal: Each avatar is an independent sibling repo with its own GitHub Pages site.
 - [x] `skills/setup/init-avatar-site.md`
 - [x] `skills/setup/bind-domain.md`
 - [x] Remove platform deploy.yml (no longer has a site)
-- [ ] Test: create second avatar using the init workflow
+- [x] `scripts/reconcile.mjs` — declarative deploy: scan avatars/, detect new, auto-init
+- [x] `npm run deploy` — one-command deploy for all avatars
+- [ ] Test: create second avatar, run `npm run deploy`, verify end-to-end
 - [ ] Verify both avatars run independently via CRON
 
 ---
@@ -287,7 +290,6 @@ site:
   domain: null                          # Custom domain (optional)
 
 pipeline:
-  schedule: "0 8 * * *"                 # CRON expression (for reference)
   min_items_to_generate: 3              # Min new items to trigger generation
   auto_publish: false                   # true = skip human review
   llm_note: "Use Claude Code agent"

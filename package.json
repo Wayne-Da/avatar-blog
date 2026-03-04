@@ -8,6 +8,7 @@
     "publish": "node scripts/publish.mjs",
     "notify": "node scripts/discord-notify.mjs",
     "init-site": "node scripts/init-site.mjs",
+    "deploy": "node scripts/reconcile.mjs",
     "miniflux:up": "docker compose up -d",
     "miniflux:down": "docker compose down",
     "miniflux:logs": "docker compose logs -f miniflux"

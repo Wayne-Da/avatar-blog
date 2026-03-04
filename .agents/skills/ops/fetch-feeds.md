@@ -35,10 +35,16 @@ node scripts/discord-notify.mjs --avatar {avatar_id} --type skipped --title "Not
 
 ## Sync Mode
 
-To create the Miniflux category and subscribe feeds for the first time:
+Bidirectional sync between config.yaml and Miniflux:
 
 ```bash
 node scripts/fetch-feeds.mjs --avatar {avatar_id} --sync
 ```
 
-This only needs to run once per avatar (or when feeds change).
+This command:
+- **Creates** the Miniflux category if it doesn't exist
+- **Subscribes** new feeds found in config.yaml
+- **Re-enables** feeds that were previously disabled but are back in config.yaml
+- **Disables** (not deletes) feeds removed from config.yaml, preserving historical entries
+
+Sync runs automatically as Step 0 of the generate-post pipeline, ensuring Miniflux is always in sync before fetching entries.

@@ -13,6 +13,7 @@ import {
   minifluxApi,
   resolveCategoryId,
   createCategory,
+  updateFeed,
   markEntriesAsRead,
 } from './lib/miniflux.mjs';
 
@@ -52,24 +53,47 @@ async function syncFeeds(config) {
     console.error(`Category "${categoryName}" already exists (id: ${categoryId})`);
   }
 
-  // Get existing feeds for this category
-  const existingFeeds = await minifluxApi('GET', `/v1/categories/${categoryId}/feeds`);
-  const existingUrls = new Set((existingFeeds || []).map((f) => f.feed_url));
+  // Get existing feeds for this category (includes disabled feeds)
+  const existingFeeds = (await minifluxApi('GET', `/v1/categories/${categoryId}/feeds`)) || [];
+  const existingByUrl = new Map(existingFeeds.map((f) => [f.feed_url, f]));
+  const configUrls = new Set(config.feeds.sources.map((s) => s.url));
 
-  // Subscribe new feeds
+  // Subscribe new feeds / re-enable disabled feeds
   for (const source of config.feeds.sources) {
-    if (existingUrls.has(source.url)) {
+    const existing = existingByUrl.get(source.url);
+    if (!existing) {
+      // New feed → subscribe
+      try {
+        await minifluxApi('POST', '/v1/feeds', {
+          feed_url: source.url,
+          category_id: categoryId,
+        });
+        console.error(`Subscribed: ${source.name} (${source.url})`);
+      } catch (err) {
+        console.error(`Failed to subscribe ${source.name}: ${err.message}`);
+      }
+    } else if (existing.disabled) {
+      // Re-enable previously disabled feed
+      try {
+        await updateFeed(existing.id, { disabled: false });
+        console.error(`Re-enabled: ${source.name} (${source.url})`);
+      } catch (err) {
+        console.error(`Failed to re-enable ${source.name}: ${err.message}`);
+      }
+    } else {
       console.error(`Feed already subscribed: ${source.name} (${source.url})`);
-      continue;
     }
-    try {
-      await minifluxApi('POST', '/v1/feeds', {
-        feed_url: source.url,
-        category_id: categoryId,
-      });
-      console.error(`Subscribed: ${source.name} (${source.url})`);
-    } catch (err) {
-      console.error(`Failed to subscribe ${source.name}: ${err.message}`);
+  }
+
+  // Disable feeds removed from config
+  for (const feed of existingFeeds) {
+    if (!configUrls.has(feed.feed_url) && !feed.disabled) {
+      try {
+        await updateFeed(feed.id, { disabled: true });
+        console.error(`Disabled: ${feed.title || feed.feed_url} (removed from config)`);
+      } catch (err) {
+        console.error(`Failed to disable ${feed.feed_url}: ${err.message}`);
+      }
     }
   }
 

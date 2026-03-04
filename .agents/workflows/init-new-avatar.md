@@ -57,7 +57,6 @@ site:
   domain: null
 
 pipeline:
-  schedule: "0 8 * * *"
   min_items_to_generate: 3
   auto_publish: false
 

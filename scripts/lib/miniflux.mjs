@@ -53,6 +53,10 @@ export async function createCategory(categoryName) {
   return result.id;
 }
 
+export async function updateFeed(feedId, changes) {
+  return minifluxApi('PUT', `/v1/feeds/${feedId}`, changes);
+}
+
 export async function markEntriesAsRead(entryIds) {
   if (!entryIds || entryIds.length === 0) return;
   await minifluxApi('PUT', '/v1/entries', {
